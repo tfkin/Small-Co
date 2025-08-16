@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000" # Maps localhost:3000 → container:3000
+    volumes:
+      - .:/src # Sync local files to container
+      - /src/node_modules # Keep node_modules isolated
+    environment:
+      - CHOKIDAR_USEPOLLING=true # Improves file watching in Docker
+      - WATCHPACK_POLLING=true

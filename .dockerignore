@@ -1,0 +1,14 @@
+node_modules
+.next
+dist
+Dockerfile
+.dockerignore
+.git
+.gitignore
+.env*
+.next/cache
+*.md
+*.log
+tsconfig.json
+eslint*
+postcss.config.*
