@@ -26,9 +26,6 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: 'Small Co.',
   description: 'Clone based from an old design of Medium',
-  icons: {
-    icon: '/favicon.ico',
-  },
 }
 
 export default function RootLayout({

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 export default function Header() {
     return (
         <header className='py-4'>
-            <nav className='container flex items-center justify-between'>
+            <nav className='container mx-auto flex items-center justify-between'>
                 <ul className='flex gap-10 text-sm font-medium'>
                     <li>
                         <Link href='/'>Home</Link>
