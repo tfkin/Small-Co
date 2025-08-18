@@ -16,7 +16,7 @@ export default function Header() {
                     </li>
                 </ul>
 
-                <div className='flex items-center justify-between gap-6'>
+                <div className='flex items-center justify-between gap-3'>
                     <ThemeToggle />
 
                     <SignedIn>
