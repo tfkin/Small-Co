@@ -1,6 +1,6 @@
+import { UserJSON } from "@clerk/backend";
 import { v, Validator } from "convex/values";
 import { internalMutation, query, QueryCtx } from "./_generated/server";
-import { UserJSON } from "@clerk/backend";
 
 export const getUsers = query({
   args: {},
@@ -16,27 +16,12 @@ export const getRecentUsers = query({
   },
 });
 
-export const currentUser = query({
+export const current = query({
   args: {},
   handler: async (ctx) => {
     return await getCurrentUser(ctx);
   },
 });
-
-export async function getCurrentUser(ctx: QueryCtx) {
-  const identity = await ctx.auth.getUserIdentity();
-  if (identity === null) {
-    return null;
-  }
-  return await userByClerkUserId(ctx, identity.subject);
-}
-
-async function userByClerkUserId(ctx: QueryCtx, clerkUserId: string) {
-  return await ctx.db
-    .query("users")
-    .withIndex("by_clerk_user_id", (q) => q.eq("clerkUserId", clerkUserId))
-    .unique();
-}
 
 export const upsertFromClerk = internalMutation({
   args: { data: v.any() as Validator<UserJSON> },
@@ -64,12 +49,33 @@ export const deleteFromClerk = internalMutation({
   async handler(ctx, { clerkUserId }) {
     const user = await userByClerkUserId(ctx, clerkUserId);
 
-    if (user === null) {
+    if (user !== null) {
       await ctx.db.delete(user._id);
     } else {
       console.warn(
-        `Can't delete user, there is none for Clerk user id: ${clerkUserId}`
+        `Can't delete user, there is none for Clerk user ID: ${clerkUserId}`
       );
     }
   },
 });
+
+export async function getCurrentUserOrThrow(ctx: QueryCtx) {
+  const userRecord = await getCurrentUser(ctx);
+  if (!userRecord) throw new Error("Can't get current user");
+  return userRecord;
+}
+
+export async function getCurrentUser(ctx: QueryCtx) {
+  const identity = await ctx.auth.getUserIdentity();
+  if (identity === null) {
+    return null;
+  }
+  return await userByClerkUserId(ctx, identity.subject);
+}
+
+async function userByClerkUserId(ctx: QueryCtx, clerkUserId: string) {
+  return await ctx.db
+    .query("users")
+    .withIndex("byClerkUserId", (q) => q.eq("clerkUserId", clerkUserId))
+    .unique();
+}
